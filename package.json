@@ -4,7 +4,9 @@
   "description": "## Repo Links https://github.com/sblum55/ideas-for-later-front https://github.com/sblum55/ideas-for-later-back",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,13 @@
   },
   "homepage": "https://github.com/sblum55/ideas-for-later-back#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^9.0.2",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.7",
     "pg": "^8.6.0",
+    "rowdy-logger": "^1.0.2",
     "sequelize": "^6.6.2"
   }
 }
