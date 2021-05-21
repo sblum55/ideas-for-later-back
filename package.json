@@ -1,0 +1,23 @@
+{
+  "name": "ideas-for-later-back",
+  "version": "1.0.0",
+  "description": "## Repo Links https://github.com/sblum55/ideas-for-later-front https://github.com/sblum55/ideas-for-later-back",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sblum55/ideas-for-later-back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sblum55/ideas-for-later-back/issues"
+  },
+  "homepage": "https://github.com/sblum55/ideas-for-later-back#readme",
+  "dependencies": {
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.2"
+  }
+}
