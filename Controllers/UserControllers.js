@@ -38,7 +38,7 @@ userControllers.login = async (req, res) => {
             }
         })
 
-        const validPassword = await bcrypt.compare(req.body.password, user.password)
+        const validPassword = await bcrypt.compareSync(req.body.password, user.password)
         const encryptedId = await jwt.sign({userId: user.id}, process.env.JWT_SECRET)
         console.log(encryptedId);
         if (validPassword) {
