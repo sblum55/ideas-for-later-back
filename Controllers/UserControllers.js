@@ -1,10 +1,13 @@
 const models = require('../models')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
+const JWT_SECRET = process.env.JWT_SECRET
 
 const userControllers = {}
 
 userControllers.create = async (req, res) => {
+    // console.log('req response sign up', req);
     try {
         const salt = bcrypt.genSaltSync(10)
         const hashedPassword = await bcrypt.hashSync(req.body.password, salt)
@@ -15,8 +18,11 @@ userControllers.create = async (req, res) => {
             password: hashedPassword
         })
 
-        const encryptedId = await jwt.sign({userId: user.id}, process.env.JWT_SECRET)
-        console.log(encryptedId);
+        console.log('userController sign up', user);
+        console.log('sign up userid', user.id);
+        console.log('process.env', JWT_SECRET);
+        const encryptedId = await jwt.sign({userId: user.id}, JWT_SECRET)
+        console.log('encryptedId', encryptedId);
         res.json({user: {
             id: encryptedId,
             name: user.name,
@@ -38,8 +44,10 @@ userControllers.login = async (req, res) => {
             }
         })
 
+        console.log('userController Login', user);
+
         const validPassword = await bcrypt.compareSync(req.body.password, user.password)
-        const encryptedId = await jwt.sign({userId: user.id}, process.env.JWT_SECRET)
+        const encryptedId = await jwt.sign({userId: user.id}, JWT_SECRET)
         console.log(encryptedId);
         if (validPassword) {
             res.json({user: {
@@ -59,7 +67,7 @@ userControllers.login = async (req, res) => {
 userControllers.verify = async (req, res) => {
     try {
         const encryptedId = req.headers.authorization
-        const decryptedId = await jwt.verify(encryptedId, process.env.JWT_SECRET)
+        const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
 
         const user = await models.user.findOne({
             where: {
