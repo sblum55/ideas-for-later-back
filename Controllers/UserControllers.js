@@ -16,6 +16,7 @@ userControllers.create = async (req, res) => {
         })
 
         const encryptedId = await jwt.sign({userId: user.id}, process.env.JWT_SECRET)
+        console.log(encryptedId);
         res.json({user: {
             id: encryptedId,
             name: user.name,
@@ -28,6 +29,8 @@ userControllers.create = async (req, res) => {
 }
 
 userControllers.login = async (req, res) => {
+    console.log('req response', req);
+    // console.log('res response', res);
     try {
         const user = await models.user.findOne({
             where: {
@@ -37,8 +40,13 @@ userControllers.login = async (req, res) => {
 
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         const encryptedId = await jwt.sign({userId: user.id}, process.env.JWT_SECRET)
+        console.log(encryptedId);
         if (validPassword) {
-            res.json({user, encryptedId, message: 'login successful'})
+            res.json({user: {
+                id: encryptedId,
+                email: user.email,
+                password: validPassword
+            }})
         } else {
             res.status(400).json({message: 'login failed'})
         }
