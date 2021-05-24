@@ -35,7 +35,7 @@ userControllers.create = async (req, res) => {
 }
 
 userControllers.login = async (req, res) => {
-    console.log('req response', req);
+    // console.log('req response', req);
     // console.log('res response', res);
     try {
         const user = await models.user.findOne({
@@ -48,8 +48,9 @@ userControllers.login = async (req, res) => {
 
         const validPassword = await bcrypt.compareSync(req.body.password, user.password)
         const encryptedId = await jwt.sign({userId: user.id}, JWT_SECRET)
-        console.log(encryptedId);
+        // console.log(encryptedId);
         if (validPassword) {
+            // res.json({user, encryptedId, message: 'login successful'})
             res.json({user: {
                 id: encryptedId,
                 email: user.email,
@@ -68,6 +69,9 @@ userControllers.verify = async (req, res) => {
     try {
         const encryptedId = req.headers.authorization
         const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
+
+        // console.log('encrypted', encryptedId);
+        // console.log('decrypted', decryptedId);
 
         const user = await models.user.findOne({
             where: {
