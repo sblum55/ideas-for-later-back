@@ -66,6 +66,7 @@ userControllers.login = async (req, res) => {
 }
 
 userControllers.verify = async (req, res) => {
+    // console.log('user verify', req.headers);
     try {
         const encryptedId = req.headers.authorization
         const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
@@ -80,7 +81,7 @@ userControllers.verify = async (req, res) => {
         })
 
         if (user) {
-            res.json({user: user.id, message: 'user found'})
+            res.json({user: encryptedId, message: 'user found'})
         } else {
             res.status(400).json({error: error.message})
         }
