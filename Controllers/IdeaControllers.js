@@ -8,7 +8,7 @@ const ideaControllers = {}
 ideaControllers.index = async (req, res) => {
     try {
         const ideas = await models.idea.findAll({
-            order: [['id', 'ASC']]
+            order: [['createdAt', 'DESC']]
         })
 
         res.json((ideas))
@@ -19,7 +19,7 @@ ideaControllers.index = async (req, res) => {
 }
 
 ideaControllers.favorite = async (req, res) => {
-    console.log('idea controllers', req.headers);
+    // console.log('idea controllers', req.headers);
     try {
 
         const encryptedId = req.headers.authorization
@@ -48,7 +48,7 @@ ideaControllers.favorite = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({error: message})
+        res.status(400).json({error: error.message})
     }
 }
 
@@ -79,44 +79,79 @@ ideaControllers.indexFav = async (req, res) => {
 }
 
 ideaControllers.complete = async (req, res) => {
-    console.log(req.headers, 'complete controller');
+    // console.log(req.headers, 'complete controller');
     try {
         const encryptedId = req.headers.authorization
         console.log('encryp id', encryptedId);
         const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
         console.log('decrypt id', decryptedId);
 
-        // const user = await models.user.findOne({
-        //     where: {
-        //         id: decryptedId.userId
-        //     }
-        // })
-
-        // console.log('complete', user);
-
-        // const idea = await models.idea.findOne({
-        //     where: {
-        //         id: req.params.ideaId,
-        //     }
-        // })
-
-        // console.log('complete idea', idea);
-
-        const complete = await models.user_idea.findOrCreate({
+        const findInfo = await models.user_idea.findOne({
             where: {
                 userId: decryptedId.userId,
                 ideaId: req.params.ideaId,
-                completed: req.body.completed
-            }
+            },
         })
 
-        console.log(complete);
-
-        await user.addIdea(idea)
-        res.json({ complete })
+        findInfo.completed = req.body.completed
+        const completed = await findInfo.save()
+        res.json({ completed })
 
     }catch (error) {
         console.log(error);
+        res.status(400).json({error: error.message})
+    }
+}
+
+ideaControllers.indexComplete = async (req, res) => {
+    try {
+        const encryptedId = req.headers.authorization
+        const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
+
+        const findInfo = await models.user_idea.findAll({
+            where: {
+                userId: decryptedId.userId,
+                completed: true
+            }
+        })
+
+        res.json({ findInfo })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({error: error.message})
+    }
+}
+
+ideaControllers.createIdea = async (req, res) => {
+    console.log('create idea headers', req.headers);
+    try {
+        const encryptedId = req.headers.authorization
+        console.log('create idea encryp', encryptedId);
+        const decryptedId = await jwt.verify(encryptedId, JWT_SECRET)
+
+        const user = await models.user.findOne({
+            where: {
+                id: decryptedId.userId
+            }
+        })
+
+        console.log('create idea user', user);
+
+        const idea = await models.idea.create({
+            image: req.body.image,
+            title: req.body.title,
+            description: req.body.description
+        })
+        console.log('create idea', idea);
+
+        await user.addIdea(idea)
+        // await idea.reload()
+
+        res.json({ idea })
+
+    } catch (error) {
+        console.log('create idea error', error);
         res.status(400).json({error: error.message})
     }
 }
